@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="2D_Action_Thing_A3"
-run/main_scene="res://Scenes/Player.tscn"
+run/main_scene="res://Scenes/test_world.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[dotnet]
+
+project/assembly_name="2D_Action_Thing_A3"
 
 [input]
 

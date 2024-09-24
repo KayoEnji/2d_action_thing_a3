@@ -21,9 +21,15 @@ var is_dashing = false
 @onready var fall_gravity : float = ((-2 * jump_height) / (time_to_descent * time_to_descent)) *-1
 @onready var jump_gravity : float = ((-2 * jump_height) / (time_to_peak * time_to_peak)) * -1
 @onready var jump_velocity : float = ((2 * jump_height) / time_to_peak) * -1
+@onready var fall_velocity : float = jump_velocity * 2
 
+var can_move := true
 
-var can_jump = false
+#var can_jump = false
+var can_jump : bool :
+	get:
+		return is_on_floor()
+		
 var is_facing_right = true
 
 #state machine
@@ -40,9 +46,13 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity.y += _get_gravity() * delta
 		
+		if Input.is_action_just_pressed("jump") and not can_jump:
+			main_sm.dispatch(&"to_fast_fall")
+			#velocity.y += -jump_velocity
+		
 
 	# Handle jump.
-	if Input.is_action_pressed("jump") and is_on_floor():
+	if Input.is_action_just_pressed("jump") and can_jump:
 		main_sm.dispatch(&"to_jump")
 
 	# Handle Dash
@@ -51,16 +61,15 @@ func _physics_process(delta):
 
 	# Get the input direction and handle the movement/deceleration.
 	##TODO: Acceleration
+	velocity.x = move_toward(velocity.x, 0, drag)
 	var direction = get_direction()
-	if direction and is_dashing:
-		velocity.x = direction * dash_speed
-	elif !is_on_floor:
-		velocity.x = move_toward(velocity.x, 0, air_speed)
-	elif direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, drag)
-	
+	if can_move:
+		if direction and is_dashing:
+			velocity.x = direction * dash_speed
+		elif !is_on_floor:
+			velocity.x = move_toward(velocity.x, 0, air_speed)
+		elif direction:
+			velocity.x = direction * SPEED
 	##print(direction)
 	
 	flip_sprite(direction)
@@ -94,11 +103,13 @@ func init_state_machine():
 	var move = LimboState.new().named("move").call_on_enter(move_start).call_on_update(move_update)
 	var jump = LimboState.new().named("jump").call_on_enter(jump_start).call_on_update(jump_update)
 	var dash = LimboState.new().named("dash").call_on_enter(dash_start).call_on_update(dash_update)
+	var fast_fall = LimboState.new().named("fast_fall").call_on_enter(fast_fall_start).call_on_update(fast_fall_update).call_on_exit(fast_fall_exit)
 	
 	main_sm.add_child(idle)
 	main_sm.add_child(move)
 	main_sm.add_child(jump)
 	main_sm.add_child(dash)
+	main_sm.add_child(fast_fall)
 	
 	main_sm.initial_state = idle
 	
@@ -111,6 +122,7 @@ func init_state_machine():
 	main_sm.add_transition(idle, dash, &"to_dash")
 	main_sm.add_transition(move, dash, &"to_dash")
 	main_sm.add_transition(jump, dash, &"to_dash")
+	main_sm.add_transition(jump, fast_fall, &"to_fast_fall")
 	
 	main_sm.initialize(self)
 	main_sm.set_active(true)
@@ -118,16 +130,12 @@ func init_state_machine():
 #state fn
 func idle_start():
 	anim.play("Idle")
-	if is_on_floor():
-		can_jump = true
 func idle_update(delta: float):
 	if velocity.x != 0:
 		main_sm.dispatch(&"to_move")
 
 func move_start():
 	anim.play("Move")
-	if is_on_floor():
-		can_jump = true
 func move_update(delta: float):
 	if velocity.x == 0:
 		main_sm.dispatch(&"state_ended")
@@ -136,16 +144,14 @@ func jump_start():
 	anim.play("Jump")
 	velocity.y = jump_velocity
 func jump_update(delta: float):
-	#if Input.is_action_just_pressed("jump") and can_jump == false:
-		#velocity.y += -JUMP_VELOCITY
-	
 	if is_on_floor():
 		main_sm.dispatch(&"state_ended")
-
-func dash_start():
-	if is_on_floor:
-		can_jump = true
 		
+	#if Input.is_action_just_pressed("jump") and can_jump == false:
+		#velocity.x = 0 # TODO: decelerate
+		#velocity.y += -jump_velocity
+
+func dash_start():		
 	var direction = get_direction()
 	if direction:
 		anim.play("ForwardDash")
@@ -156,4 +162,20 @@ func dash_update(delta: float):
 	pass
 func _on_dash_time_timeout():
 	is_dashing = false
+	main_sm.dispatch(&"state_ended")
+
+func fast_fall_start():
+	can_move = false
+	velocity.y += -fall_velocity
+	
+func fast_fall_update(delta: float):
+	if is_on_floor() and $LandBuffer.is_stopped():
+		anim.play("Land")
+		$LandBuffer.start()
+		print("timer started")
+		
+func fast_fall_exit():
+	can_move = true
+
+func _on_land_buffer_timeout():
 	main_sm.dispatch(&"state_ended")

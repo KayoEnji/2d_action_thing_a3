@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://180f7splqaym"]
+[gd_scene load_steps=16 format=3 uid="uid://180f7splqaym"]
 
 [ext_resource type="Script" path="res://Scenes/player.gd" id="1_5ucb3"]
 [ext_resource type="Texture2D" uid="uid://rvjydonuekvk" path="res://Assets/Char_3.png" id="1_ecqyw"]
@@ -151,6 +151,21 @@ tracks/0/keys = {
 "values": [9]
 }
 
+[sub_resource type="Animation" id="Animation_gpy5k"]
+resource_name = "Land"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [12, 16]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xy4nr"]
 _data = {
 "BackDash": SubResource("Animation_85x20"),
@@ -160,6 +175,7 @@ _data = {
 "GroundLight_3": SubResource("Animation_e4hsv"),
 "Idle": SubResource("Animation_xxhdr"),
 "Jump": SubResource("Animation_hq6f6"),
+"Land": SubResource("Animation_gpy5k"),
 "Move": SubResource("Animation_rxl8u"),
 "RESET": SubResource("Animation_ku5ws")
 }
@@ -188,4 +204,9 @@ libraries = {
 wait_time = 0.2
 script = ExtResource("3_y6sdf")
 
+[node name="LandBuffer" type="Timer" parent="."]
+wait_time = 0.167
+one_shot = true
+
 [connection signal="timeout" from="dash_time" to="." method="_on_dash_time_timeout"]
+[connection signal="timeout" from="LandBuffer" to="." method="_on_land_buffer_timeout"]
