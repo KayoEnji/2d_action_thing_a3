@@ -12,6 +12,8 @@ extends CharacterBody2D
 @export var time_to_peak : float
 @export var time_to_descent : float
 
+@export var push_force : float
+
 @export var dash_speed :float
 var is_dashing = false
 
@@ -40,7 +42,7 @@ func _ready():
 	init_state_machine()
 
 func _physics_process(delta):
-	print(main_sm.get_active_state())
+	#print(main_sm.get_active_state())
 	
 	# Add the gravity & air drag.
 	if not is_on_floor():
@@ -74,6 +76,12 @@ func _physics_process(delta):
 	
 	flip_sprite(direction)
 	move_and_slide()
+	
+	# after calling move_and_slide()
+	for i in get_slide_collision_count():
+		var c = get_slide_collision(i)
+		if c.get_collider() is RigidBody2D:
+			c.get_collider().apply_central_impulse(-c.get_normal() * push_force)
 
 func get_direction():
 	var direction = Input.get_axis("left", "right")
@@ -172,7 +180,7 @@ func fast_fall_update(delta: float):
 	if is_on_floor() and $LandBuffer.is_stopped():
 		anim.play("Land")
 		$LandBuffer.start()
-		print("timer started")
+		#print("timer started")
 		
 func fast_fall_exit():
 	can_move = true

@@ -1,4 +1,4 @@
-class_name Hurtbox
+#class_name Hurtbox
 extends Area2D
 
 

@@ -120,6 +120,21 @@ tracks/0/keys = {
 "values": [7, 51]
 }
 
+[sub_resource type="Animation" id="Animation_gpy5k"]
+resource_name = "Land"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [12, 16]
+}
+
 [sub_resource type="Animation" id="Animation_rxl8u"]
 resource_name = "Move"
 length = 0.16667
@@ -151,21 +166,6 @@ tracks/0/keys = {
 "values": [9]
 }
 
-[sub_resource type="Animation" id="Animation_gpy5k"]
-resource_name = "Land"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [12, 16]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xy4nr"]
 _data = {
 "BackDash": SubResource("Animation_85x20"),
@@ -182,6 +182,7 @@ _data = {
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_5ucb3")
+push_force = 80.0
 dash_speed = 900.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

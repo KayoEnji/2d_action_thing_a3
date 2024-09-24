@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://boeyr5rqc33ul"]
+[gd_scene load_steps=11 format=3 uid="uid://boeyr5rqc33ul"]
 
 [ext_resource type="Texture2D" uid="uid://chvtmntcov7e0" path="res://Assets/Sandbag.png" id="1_f4snp"]
+[ext_resource type="Script" path="res://sandbag.gd" id="1_u82uc"]
 [ext_resource type="PackedScene" uid="uid://b4nl87vnpifgy" path="res://hurtbox.tscn" id="2_tjy1l"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yq4gv"]
-size = Vector2(18, 31)
+size = Vector2(54, 93)
 
 [sub_resource type="Animation" id="Animation_72xvm"]
 resource_name = "Hit1"
@@ -114,14 +115,17 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8dd46"]
-size = Vector2(18, 31)
+size = Vector2(60, 100)
 
-[node name="Sandbag" type="StaticBody2D"]
+[node name="Sandbag" type="RigidBody2D"]
 position = Vector2(-1, 0)
+mass = 5.0
+script = ExtResource("1_u82uc")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(-1, 0)
+scale = Vector2(3, 3)
 texture = ExtResource("1_f4snp")
 region_enabled = true
 region_rect = Rect2(172, 117, 18, 31)
@@ -139,8 +143,14 @@ libraries = {
 [node name="hurtbox" parent="." instance=ExtResource("2_tjy1l")]
 
 [node name="CollisionShape2D" parent="hurtbox" index="0"]
-position = Vector2(-1, -0.5)
+position = Vector2(-1, 0)
 shape = SubResource("RectangleShape2D_8dd46")
 debug_color = Color(0.864838, 0.000585655, 0.863468, 0.42)
+
+[node name="KnockTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[connection signal="timeout" from="KnockTimer" to="." method="_on_knock_timer_timeout"]
 
 [editable path="hurtbox"]
