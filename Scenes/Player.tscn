@@ -1,0 +1,191 @@
+[gd_scene load_steps=15 format=3 uid="uid://180f7splqaym"]
+
+[ext_resource type="Script" path="res://Scenes/player.gd" id="1_5ucb3"]
+[ext_resource type="Texture2D" uid="uid://rvjydonuekvk" path="res://Assets/Char_3.png" id="1_ecqyw"]
+[ext_resource type="Script" path="res://Scenes/dash_time.gd" id="3_y6sdf"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3a57y"]
+radius = 11.0
+height = 42.0
+
+[sub_resource type="Animation" id="Animation_85x20"]
+resource_name = "BackDash"
+length = 0.100003
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+
+[sub_resource type="Animation" id="Animation_35fk3"]
+resource_name = "ForwardDash"
+length = 0.16667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [20]
+}
+
+[sub_resource type="Animation" id="Animation_ydky6"]
+resource_name = "GroundLight_1"
+length = 0.16667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [37, 36]
+}
+
+[sub_resource type="Animation" id="Animation_46al7"]
+resource_name = "GroundLight_2"
+length = 0.16667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [37, 38]
+}
+
+[sub_resource type="Animation" id="Animation_e4hsv"]
+resource_name = "GroundLight_3"
+length = 0.16667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [51, 45]
+}
+
+[sub_resource type="Animation" id="Animation_xxhdr"]
+resource_name = "Idle"
+length = 0.16667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [9]
+}
+
+[sub_resource type="Animation" id="Animation_hq6f6"]
+resource_name = "Jump"
+length = 0.333337
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [7, 51]
+}
+
+[sub_resource type="Animation" id="Animation_rxl8u"]
+resource_name = "Move"
+length = 0.16667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [19]
+}
+
+[sub_resource type="Animation" id="Animation_ku5ws"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [9]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xy4nr"]
+_data = {
+"BackDash": SubResource("Animation_85x20"),
+"ForwardDash": SubResource("Animation_35fk3"),
+"GroundLight_1": SubResource("Animation_ydky6"),
+"GroundLight_2": SubResource("Animation_46al7"),
+"GroundLight_3": SubResource("Animation_e4hsv"),
+"Idle": SubResource("Animation_xxhdr"),
+"Jump": SubResource("Animation_hq6f6"),
+"Move": SubResource("Animation_rxl8u"),
+"RESET": SubResource("Animation_ku5ws")
+}
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_5ucb3")
+dash_speed = 900.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_ecqyw")
+hframes = 18
+vframes = 16
+frame = 9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+texture_filter = 1
+shape = SubResource("CapsuleShape2D_3a57y")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_xy4nr")
+}
+
+[node name="dash_time" type="Timer" parent="."]
+wait_time = 0.2
+script = ExtResource("3_y6sdf")
+
+[connection signal="timeout" from="dash_time" to="." method="_on_dash_time_timeout"]
